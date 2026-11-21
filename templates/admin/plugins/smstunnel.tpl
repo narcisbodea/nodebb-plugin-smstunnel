@@ -84,6 +84,11 @@
 				</div>
 			</div>
 
+			<hr />
+			<h5 class="fw-bold tracking-tight">{{tx("smstunnel:acp.erase")}}</h5>
+			<p class="form-text">{{tx("smstunnel:acp.erase-help")}}</p>
+			<button type="button" class="btn btn-sm btn-outline-danger" id="smstunnel-erase">{{tx("smstunnel:acp.erase-button")}}</button>
+
 			<template id="smstunnel-staff-row">
 				<div class="border rounded p-2 d-flex flex-wrap align-items-center gap-2" data-row>
 					<span class="fw-semibold" data-field="number"></span>

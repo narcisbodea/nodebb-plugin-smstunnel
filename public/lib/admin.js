@@ -2,7 +2,7 @@
 
 /* globals $, define */
 
-define('admin/plugins/smstunnel', ['api', 'alerts', 'translator'], (api, alerts, translator) => {
+define('admin/plugins/smstunnel', ['api', 'alerts', 'translator', 'bootbox'], (api, alerts, translator, bootbox) => {
 	const ACP = {};
 	const route = '/plugins/smstunnel/admin';
 
@@ -97,6 +97,27 @@ define('admin/plugins/smstunnel', ['api', 'alerts', 'translator'], (api, alerts,
 				label: $('#smstunnel-staff-label').val(),
 			}), 'code-sent').then(() => {
 				$('#smstunnel-staff-phone, #smstunnel-staff-label').val('');
+			});
+		});
+
+		$('#smstunnel-erase').on('click', () => {
+			translator.translate('[[smstunnel:acp.erase-confirm]]', (question) => {
+				translator.translate('[[smstunnel:acp.erase-button]]', (label) => {
+					bootbox.confirm({
+						message: question,
+						buttons: { confirm: { label, className: 'btn-danger' } },
+						callback: (yes) => {
+							if (!yes) {
+								return;
+							}
+							api.post(`${route}/erase-numbers`, { confirm: 'erase-all-numbers' }).then((view) => {
+								render(view);
+								const { members, staff, pending } = view.erased;
+								alerts.success(`[[smstunnel:acp.erased, ${members}, ${staff}, ${pending}]]`);
+							}).catch(alerts.error);
+						},
+					});
+				});
 			});
 		});
 

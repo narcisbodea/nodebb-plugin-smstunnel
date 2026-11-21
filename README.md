@@ -75,6 +75,7 @@ Behind a reverse proxy, set `trust_proxy` in NodeBB's `config.json` so the limit
   reason.
 - The key stays on your server. Logs hold no numbers, codes or texts.
 - Numbers are stored in your forum's database, and a member's number is deleted with their account.
+- To remove members' numbers, press **Erase all numbers** on the settings page before uninstalling.
 
 ## License
 
