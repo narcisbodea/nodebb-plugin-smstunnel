@@ -1,0 +1,26 @@
+{
+	"id": "nodebb-plugin-smstunnel",
+	"name": "SMSTunnel",
+	"description": "Texts from your own Android phone: staff alerts, and reply and mention texts that members turn on themselves.",
+	"url": "https://github.com/narcisbodea/nodebb-plugin-smstunnel",
+	"library": "./library.js",
+	"hooks": [
+		{ "hook": "static:app.load", "method": "init" },
+		{ "hook": "static:api.routes", "method": "addRoutes" },
+		{ "hook": "filter:admin.header.build", "method": "addAdminNavigation" },
+		{ "hook": "filter:user.customSettings", "method": "addMemberPanel" },
+		{ "hook": "action:notification.pushed", "method": "onNotificationPushed" },
+		{ "hook": "action:flags.create", "method": "onFlagCreated" },
+		{ "hook": "action:post-queue.save", "method": "onPostQueued" },
+		{ "hook": "action:user.delete", "method": "onUserDeleted" }
+	],
+	"modules": {
+		"../admin/plugins/smstunnel.js": "./public/lib/admin.js"
+	},
+	"scripts": [
+		"public/lib/main.js"
+	],
+	"templates": "templates",
+	"languages": "languages",
+	"defaultLang": "en-GB"
+}

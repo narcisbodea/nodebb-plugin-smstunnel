@@ -1,0 +1,44 @@
+{
+  "name": "nodebb-plugin-smstunnel",
+  "version": "1.0.0",
+  "description": "Texts from your own Android phone for NodeBB: alerts for staff, and reply and mention texts that members turn on themselves.",
+  "main": "library.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/narcisbodea/nodebb-plugin-smstunnel.git"
+  },
+  "keywords": [
+    "nodebb",
+    "plugin",
+    "sms",
+    "smstunnel",
+    "notifications",
+    "moderation"
+  ],
+  "author": "NARBOWEB SRL <support@smstunnel.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/narcisbodea/nodebb-plugin-smstunnel/issues",
+    "email": "support@smstunnel.io"
+  },
+  "homepage": "https://github.com/narcisbodea/nodebb-plugin-smstunnel#readme",
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "library.js",
+    "plugin.json",
+    "lib/",
+    "public/",
+    "templates/",
+    "languages/",
+    "LICENSE",
+    "README.md"
+  ],
+  "nbbpm": {
+    "compatibility": "^4.16.0"
+  }
+}
