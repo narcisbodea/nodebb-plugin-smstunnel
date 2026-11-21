@@ -63,9 +63,15 @@ Plugin.onPostQueued = () => {
 	later('queue alert', () => sender.onStaffEvent('queued'));
 };
 
-Plugin.onUserDeleted = (data) => {
+// Fires when the account itself goes. NodeBB's action:user.delete also fires when only a member's content is removed,
+// and that member keeps their account and their texts. An error here must not stop the account from being deleted.
+Plugin.onUserDeleted = async (data) => {
 	const uid = parseInt(data && data.uid, 10);
 	if (uid > 0) {
-		later('account removal', () => members.forget(uid));
+		try {
+			await members.forget(uid);
+		} catch (err) {
+			core.logProblem('account removal', err);
+		}
 	}
 };

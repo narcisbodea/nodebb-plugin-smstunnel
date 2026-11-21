@@ -12,7 +12,7 @@
 		{ "hook": "action:notification.pushed", "method": "onNotificationPushed" },
 		{ "hook": "action:flags.create", "method": "onFlagCreated" },
 		{ "hook": "action:post-queue.save", "method": "onPostQueued" },
-		{ "hook": "action:user.delete", "method": "onUserDeleted" }
+		{ "hook": "static:user.delete", "method": "onUserDeleted" }
 	],
 	"modules": {
 		"../admin/plugins/smstunnel.js": "./public/lib/admin.js"
