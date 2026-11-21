@@ -39,6 +39,6 @@
     "README.md"
   ],
   "nbbpm": {
-    "compatibility": "^4.16.0"
+    "compatibility": "^4.16.9"
   }
 }

@@ -6,6 +6,8 @@ const assert = require('node:assert');
 const { safeName, safeWords, siteLabel } = require('../lib/words');
 const numbers = require('../lib/numbers');
 const api = require('../lib/api');
+const sender = require('../lib/sender');
+const settings = require('../lib/settings');
 
 test('keeps ordinary names in any alphabet', () => {
 	for (const [input, expected] of [
@@ -172,4 +174,55 @@ test('the request goes to the fixed host with the event key and refuses redirect
 	} finally {
 		global.fetch = original;
 	}
+});
+
+test('only a reply or a mention of one person can become a text', () => {
+	const you = '[[notifications:user-mentioned-you-in, bob, Title]]';
+	const group = '[[notifications:user-mentioned-group-in, bob, user, Title]]';
+	assert.strictEqual(sender.classify({ type: 'new-reply', pid: 5 }), 'reply');
+	assert.strictEqual(sender.classify({ type: 'mention', pid: 5, nid: 'tid:1:pid:5:uid:2:user', bodyShort: you }), 'mention');
+	for (const other of [
+		{ type: 'mention', pid: 5, nid: 'tid:1:pid:5:uid:2:staff', bodyShort: group },
+		{ type: 'mention', pid: 5, nid: 'tid:1:pid:5:uid:2:user', bodyShort: group },
+		{ type: 'mention', nid: 'chat_1_2_3', bodyShort: you },
+		{ type: 'mention', pid: 'https://remote.example/post/1', nid: 'x:user', bodyShort: you },
+		{ type: 'new-reply', pid: 'https://remote.example/post/1' },
+		{ type: 'post-edit', pid: 5 },
+		{ type: 'new-topic', pid: 5 },
+		{ type: 'follow', pid: 5 },
+		{ type: 'new-chat' },
+		null,
+		undefined,
+	]) {
+		assert.strictEqual(sender.classify(other), null, JSON.stringify(other));
+	}
+});
+
+test('the wording is fixed and carries no post content', () => {
+	assert.strictEqual(
+		sender.memberText('reply', 'Forum', 'Ana', 'https://f.example/post/7'),
+		'Forum: Ana replied to your post. https://f.example/post/7 Turn these texts off in your forum settings.'
+	);
+	assert.strictEqual(
+		sender.memberText('mention', 'Forum', '', 'https://f.example/post/7'),
+		'Forum: A member mentioned you. https://f.example/post/7 Turn these texts off in your forum settings.'
+	);
+	assert.strictEqual(sender.alertText('flagged', 1, 'Forum', 'https://f.example'), 'Forum: 1 post was flagged. Review: https://f.example/flags');
+	assert.strictEqual(sender.alertText('flagged', 3, 'Forum', 'https://f.example'), 'Forum: 3 posts were flagged. Review: https://f.example/flags');
+	assert.strictEqual(sender.alertText('queued', 1, 'Forum', 'https://f.example'), 'Forum: 1 post is waiting for approval. Review: https://f.example/post-queue');
+	assert.strictEqual(sender.alertText('queued', 2, 'Forum', 'https://f.example'), 'Forum: 2 posts are waiting for approval. Review: https://f.example/post-queue');
+});
+
+test('everything is off until an administrator turns it on', () => {
+	const values = settings.clean({});
+	assert.strictEqual(settings.isOn(values), false);
+	assert.strictEqual(settings.membersOn(values), false);
+	assert.strictEqual(settings.alertOn(values, 'flagged'), false);
+	assert.strictEqual(settings.alertOn(values, 'queued'), false);
+	const onlyMaster = settings.clean({ enabled: 'on' });
+	assert.strictEqual(settings.membersOn(onlyMaster), false);
+	assert.strictEqual(settings.alertOn(onlyMaster, 'flagged'), false);
+	assert.strictEqual(settings.alertOn(settings.clean({ enabled: 'on', alerts: 'on', alertFlags: 'off' }), 'flagged'), false);
+	assert.strictEqual(settings.clean({ memberHour: 999 }).memberHour, 10);
+	assert.strictEqual(settings.clean({ forumDay: -4 }).forumDay, 100);
 });

@@ -19,7 +19,7 @@
 		panel.find('[data-field="off"], [data-action="on"]').toggleClass('d-none', state.state !== 'off');
 	}
 
-	function bind(root, api, alerts, bootbox) {
+	function bind(root, api, alerts, bootbox, translator) {
 		function run(request, successKey) {
 			request.then((state) => {
 				show(root, state);
@@ -45,16 +45,18 @@
 			} else if (action === 'on' || action === 'off') {
 				run(api.put(`${route}/state`, { state: action }), action === 'on' ? 'now-on' : 'now-off');
 			} else if (action === 'remove') {
-				bootbox.confirm('[[smstunnel:member.remove-confirm]]', (yes) => {
-					if (yes) {
-						run(api.del(route, {}), 'removed');
-					}
+				translator.translate('[[smstunnel:member.remove-confirm]]', (question) => {
+					bootbox.confirm(question, (yes) => {
+						if (yes) {
+							run(api.del(route, {}), 'removed');
+						}
+					});
 				});
 			}
 		});
 	}
 
-	function mount(api, alerts, bootbox) {
+	function mount(api, alerts, bootbox, translator) {
 		const root = $('#smstunnel-member-panel');
 		if (!root.length || root.attr('data-ready')) {
 			return;
@@ -69,13 +71,13 @@
 
 		api.get(route, {}).then(state => app.parseAndTranslate('partials/smstunnel/member-panel', state).then((html) => {
 			root.empty().append(html);
-			bind(root, api, alerts, bootbox);
+			bind(root, api, alerts, bootbox, translator);
 			show(root, state);
 		})).catch(alerts.error);
 	}
 
-	require(['hooks', 'api', 'alerts', 'bootbox'], (hooks, api, alerts, bootbox) => {
-		hooks.on('action:ajaxify.end', () => mount(api, alerts, bootbox));
-		mount(api, alerts, bootbox);
+	require(['hooks', 'api', 'alerts', 'bootbox', 'translator'], (hooks, api, alerts, bootbox, translator) => {
+		hooks.on('action:ajaxify.end', () => mount(api, alerts, bootbox, translator));
+		mount(api, alerts, bootbox, translator);
 	});
 }());
