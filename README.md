@@ -1,6 +1,7 @@
 # SMSTunnel for NodeBB
 
-Texts for your forum, sent from your own Android phone and number through [SMSTunnel](https://smstunnel.io).
+Texts for your forum, sent from your own number, through your Android phone and the [SMSTunnel](https://smstunnel.io) app
+([on Google Play](https://play.google.com/store/apps/details?id=io.smstunnel.app)).
 
 - **Staff alerts:** a text to the numbers you saved when a post is flagged or waits in the post queue.
 - **Member texts:** members can turn on a text for replies to their posts and for mentions, to a number they confirm
@@ -10,6 +11,9 @@ There is no way to text all members, and nobody gets a text they didn't turn on.
 until you turn it on.
 
 Requires NodeBB 4.16.9 or later. Tested on 4.16.9 with MongoDB, in a cluster of two processes.
+
+> Written with AI assistance (Claude). Tested on a real NodeBB 4.16.9 forum against a local copy of the SMSTunnel API, and
+> its sending code delivered a real text to a real phone through the live API. Please report anything that misbehaves.
 
 ## Set up
 
